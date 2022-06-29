@@ -67,8 +67,34 @@ const createIntern = async function(req, res) {
         return res.status(400).send({ status: false, message: "Enter a valid college name." })
     }
     result.collegeId = a
-    let saveData = await (await internModel.create(rresult)).populate('collegeId')
+    let saveData = await (await internModel.create(result)).populate('collegeId')
     return res.status(201).send({ status: true, data: { saveData } })
 }
 
+const collegeDetails = async (req, res) =>{
+
+    let collegename = req.query.name
+
+    if(!nullValue(collegename)){
+        res.status(400).send({status:false,message:'College name is require'})
+    }
+
+    let collegeId = await collegeModel.findOne({name:collegename}).select({_id:1,name:1,fullName:1,logoLink:1})
+   
+console.log(collegeId)
+let coll ={}
+
+// coll=collegeId
+
+let intern = await internModel.find({collegeId:collegeId._id}).select({_id:1,name:1,email:1,mobile:1})
+console.log(intern)
+coll['neme']=collegeId.name
+coll['fullNeme']=collegeId.fullName
+coll['logolink']=collegeId.logoLink
+coll["intern"] = intern
+// let data = collegeId
+return res.status(200).send({coll})
+}
+
 module.exports.createIntern = createIntern
+module.exports.collegeDetails=collegeDetails

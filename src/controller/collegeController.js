@@ -17,6 +17,7 @@ const idV = function(value) {
 }
 
 const createCollege = async function(req, res) {
+    
     const { name, fullName, logoLink } = req.body
 
     if (Object.keys(req.body).length == 0) {
@@ -61,4 +62,7 @@ const createCollege = async function(req, res) {
     return res.status(201).send({ status: true, data: { saveData } })
 
 }
+
+
+
 module.exports.createCollege = createCollege
