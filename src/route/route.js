@@ -10,4 +10,5 @@ route.post('/functionup/interns', internController.createIntern)
 
 route.get('/functionup/collegeDetails', internController.getInterns)
 
+
 module.exports = route;
