@@ -84,7 +84,7 @@ const getInterns = async function(req, res) {
         res.status(400).send({ status: false, message: 'College name is require' })
     }
 
-    let collegeId = await collegeModel.findOne({ name: collegeName }).select({  name: 1, fullName: 1, logoLink: 1 })
+    let collegeId = await collegeModel.findOne({ name: collegeName }).select({ _id:1, name: 1, fullName: 1, logoLink: 1 })
 
     console.log(collegeId)
     let data = {}
