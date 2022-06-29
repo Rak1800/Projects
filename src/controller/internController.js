@@ -65,7 +65,7 @@ const createIntern = async function(req, res) {
     result.mobile = mobile
 
 
-    let collegeId = await collegeModel.findOne({ name: collegeName }).select({ _id: 1 })
+    let collegeId = await collegeModel.findOne({ name: collegeName }).select({ _id: 1 }) 
     if (!collegeId) {
         return res.status(400).send({ status: false, message: "Enter a valid college name." })
     }
@@ -78,7 +78,7 @@ const createIntern = async function(req, res) {
 
 const getInterns = async function(req, res) {
 
-    let collegeName = req.query.collegeName
+    let collegeName = req.query.name
 
     if (!nullValue(collegeName)) {
         res.status(400).send({ status: false, message: 'College name is require' })
@@ -89,9 +89,9 @@ const getInterns = async function(req, res) {
     console.log(collegeId)
     let data = {}
 
-    let intern = await internModel.find({ collegeId: collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
+    let intern = await internModel.find({ collegeId:collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
     console.log(intern)
-    data['name'] = collegeId
+    data[" "]= collegeId
     // data['fullName'] = collegeId.fullName
     // data['logolink'] = collegeId.logoLink
     data["intern"] = intern
