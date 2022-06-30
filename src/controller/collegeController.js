@@ -18,18 +18,20 @@ const createCollege = async function(req, res) {
             return res.status(400).send({ status: false, message: "Kindly enter your details." })
         }
 
+
+        let final = {}
         if (nullValue(name)) {
             return res.status(400).send({ status: false, message: "Invalid College name or college name is not mentioned." })
         }
         if (!/^[a-zA-Z]{3,10}$/.test(name)) {
             return res.status(400).send({ status: false, message: "Invalid College Name" })
         }
-        let lowerCase=name.toLowerCase()
-        
-        const duplicateName = await collegeModel.findOne({ name: lowerCase}) //findOne will give us null so null is used as false in boolean
+        // let lowerCase = name.toLowerCase()
+        const duplicateName = await collegeModel.findOne({ name: name.toLowerCase() }) //findOne will give us null so null is used as false in boolean
         if (duplicateName) {
             return res.status(400).send({ status: false, message: "The college name is already there, you can directly apply for the internship." })
         }
+        final.name = name.toLowerCase()
 
 
         if (nullValue(fullName)) {
@@ -42,6 +44,7 @@ const createCollege = async function(req, res) {
         if (duplicateFullName) {
             return res.status(400).send({ status: false, message: "The college full name is already there, you can directly apply for the internship." })
         }
+        final.fullName = fullName
 
 
         if (nullValue(logoLink)) {
@@ -50,9 +53,11 @@ const createCollege = async function(req, res) {
         if (!validator.isURL(logoLink)) {
             return res.status(400).send({ status: false, message: "The logoLink is not valid." })
         }
+        final.logoLink = logoLink
 
+        console.log(final)
+        let saveData = await collegeModel.create(final)
 
-        let saveData = await collegeModel.create(req.body)
         return res.status(201).send({ status: true, data: { saveData } })
 
     } catch (error) {
