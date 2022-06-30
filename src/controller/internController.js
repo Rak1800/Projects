@@ -64,7 +64,8 @@ const createIntern = async function(req, res) {
         }
         result.collegeId = collegeId._id
         let saveData = await internModel.create(result)
-        return res.status(201).send({ status: true, data: { saveData } })
+        let  allData = {name:saveData.name,email:saveData.email,mobile:saveData.mobile,collegeId:saveData.collegeId,isDeleted:saveData.isDeleted}
+        return res.status(201).send({ status: true, data:allData })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -79,24 +80,24 @@ const getInterns = async function(req, res) {
             return res.status(400).send({ status: false, message: 'College name is not mentioned.' })
         }
 
-        let collegeId = await collegeModel.findOne({ name: collegeName }).select({ _id: 0, name: 1, fullName: 1, logoLink: 1 })
+        let collegeId = await collegeModel.findOne({ name:collegeName }).select({ _id: 1,name:1,fullName:1,logoLink:1 })
         if (!collegeId) {
             return res.status(404).send({ status: false, message: "No such College is available" })
         }
-        let college=await collegeModel.findOne({name:collegeName}).select({_id:1})
-
-        collegeId = JSON.parse(JSON.stringify(collegeId)) // Eliminates the extra keys added by the MongoDB.
+       // let college=await collegeModel.findOne({name:collegeName}).select({_id:1})
+        let college ={name:collegeId.name,fullName:collegeId.fullName,logoLink:collegeId.logoLink}
+          //collegeId = JSON.parse(JSON.stringify(collegeId))  Eliminates the extra keys added by the MongoDB.
          console.log(collegeId)
-         let j=JSON.stringify(collegeId)
-         console.log(j)
+        //  let j=JSON.stringify(collegeId)
+        //  console.log(j)
 
-        let intern = await internModel.find({ collegeId: college._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
+        let intern = await internModel.find({ collegeId: collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
         if (intern.length == 0) {
-            let data = {...collegeId, intern: "No intern have applied to this college." }
+            let data = {...college, intern: "No intern have applied to this college." }
             return res.status(404).send({ status: false, message: data })
         }
 
-        let data = {...collegeId, interns: intern }
+        let data = {...college, interns: intern }
 
         return res.status(200).send({ status: true, data })
     } catch (error) {

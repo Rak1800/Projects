@@ -55,10 +55,11 @@ const createCollege = async function(req, res) {
         }
         final.logoLink = logoLink
 
-        console.log(final)
+       
         let saveData = await collegeModel.create(final)
-
-        return res.status(201).send({ status: true, data: { saveData } })
+        //let allData = await collegeModel.findOne({name:saveData.name}).select({_id:0,name:1,fullName:1,logoLink:1})
+         let  allData = {name:saveData.name,fullName:saveData.fullName,logoLink:saveData.logoLink,isDeleted:saveData.isDeleted}
+        return res.status(201).send({ status: true, data: allData})
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
