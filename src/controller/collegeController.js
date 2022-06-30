@@ -21,10 +21,12 @@ const createCollege = async function(req, res) {
         if (nullValue(name)) {
             return res.status(400).send({ status: false, message: "Invalid College name or college name is not mentioned." })
         }
-        if (!/^[a-z]{3,10}$/.test(name)) {
+        if (!/^[a-zA-Z]{3,10}$/.test(name)) {
             return res.status(400).send({ status: false, message: "Invalid College Name" })
         }
-        const duplicateName = await collegeModel.findOne({ name: name }) //findOne will give us null so null is used as false in boolean
+        let lowerCase=name.toLowerCase()
+        
+        const duplicateName = await collegeModel.findOne({ name: lowerCase}) //findOne will give us null so null is used as false in boolean
         if (duplicateName) {
             return res.status(400).send({ status: false, message: "The college name is already there, you can directly apply for the internship." })
         }
@@ -33,7 +35,7 @@ const createCollege = async function(req, res) {
         if (nullValue(fullName)) {
             return res.status(400).send({ status: false, message: "Invalid College full name or College full name is not mentioned." })
         }
-        if (!/^[a-zA-Z ]{3,50}$/.test(fullName)) {
+        if (!/^[a-zA-Z ,]{3,50}$/.test(fullName)) {
             return res.status(400).send({ status: false, message: "Invalid College full name" })
         }
         const duplicateFullName = await collegeModel.findOne({ fullName: fullName })

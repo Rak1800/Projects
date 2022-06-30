@@ -60,7 +60,7 @@ const createIntern = async function(req, res) {
     result.collegeId = collegeId
 
     if (!/^[a-z]{3,20}$/.test(collegeName)) {
-        return res.status(400).send({ status: false, message: "Intern name is not valid" })
+        return res.status(400).send({ status: false, message: "COLLEGE name is not valid" })
     }
     if (nullValue(collegeName)) {
         return res.status(400).send({ status: false, message: "Invalid intern name or intern name is not mentioned." })
@@ -78,26 +78,28 @@ const createIntern = async function(req, res) {
 const getInterns = async function(req, res) {
     try{
 
-    let collegeName = req.query.collegeName
+    let collegeName = req.query.collegeName 
     
-    if (collegeName == undefined) {
+    
 
-    }
-
-    if (nullValue(collegeName)) {
-        res.status(400).send({ status: false, message: 'College name is not mentioned.' })
+    if (nullValue(collegeName)) { 
+      return  res.status(400).send({ status: false, message: 'College name is not mentioned.' })
     }
 
     let collegeId = await collegeModel.findOne({ name: collegeName }).select({ _id:1, name: 1, fullName: 1, logoLink: 1 })
+       if(!collegeId)
+       return res.status(404).send({status:false,message:"No such college found"})
+
 
     let intern = await internModel.find({ collegeId: collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
-
+    if(!intern)
+    return res.status(404).send({status:false,message:"No in found"})
     let data = {}
        
     data['name'] = collegeId.name
     data['fullName'] = collegeId.fullName
     data['logolink'] = collegeId.logoLink
-    data["intern"] = intern
+    data["interns"] = intern
 
     return res.status(200).send({ status: true, data }) 
 }catch(error){

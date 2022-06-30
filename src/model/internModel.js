@@ -16,7 +16,7 @@ const internSchema = new mongoose.Schema({
         trim: true
     },
     mobile: {
-        type: Number,
+        type:String,
         required: true,
         unique: true,
         trim: true
@@ -32,6 +32,6 @@ const internSchema = new mongoose.Schema({
     deletedAt: Date
 
 
-}, { timestamp: true });
+}, { timestamps: true });
 
 module.exports = mongoose.model('Interns', internSchema);
