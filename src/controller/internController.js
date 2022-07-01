@@ -1,7 +1,6 @@
+const collegeModel = require('../model/collegeModel')
 const internModel = require('../model/internModel')
 const validator = require('validator')
-const collegeModel = require('../model/collegeModel')
-
 const nullValue = function(value) {
     if (value == undefined || value == null) return true
     if (value.trim().length == 0) return true
@@ -11,7 +10,7 @@ const nullValue = function(value) {
 
 const createIntern = async function(req, res) {
     try {
-        let result = {}
+        let final = {}
         const { name, email, mobile, collegeName } = req.body
 
         if (Object.keys(req.body).length == 0) {
@@ -23,7 +22,7 @@ const createIntern = async function(req, res) {
         if (nullValue(name)) {
             return res.status(400).send({ status: false, message: "Invalid intern name or intern name is not mentioned." })
         }
-        result.name = name
+        final.name = name
 
 
         if (nullValue(email)) {
@@ -36,7 +35,7 @@ const createIntern = async function(req, res) {
         if (duplicateEmail) {
             return res.status(400).send({ status: false, message: "Intern email already exists." })
         }
-        result.email = email
+        final.email = email
 
 
         if (mobile == undefined || mobile == null) {
@@ -49,9 +48,9 @@ const createIntern = async function(req, res) {
         if (duplicateMobile) {
             return res.status(400).send({ status: false, message: "Intern mobile number already exists." })
         }
-        result.mobile = mobile
+        final.mobile = mobile
 
-    let collegeId = await collegeModel.findOne({ name: collegeName }).select({ _id: 1 }) 
+   
 
         if (!/^[a-zA-Z ]{3,20}$/.test(collegeName)) {
             return res.status(400).send({ status: false, message: "College name is not valid" })
@@ -59,13 +58,18 @@ const createIntern = async function(req, res) {
         if (nullValue(collegeName)) {
             return res.status(400).send({ status: false, message: "Invalid intern name or intern name is not mentioned." })
         }
+        let collegeId = await collegeModel.findOne({ name: collegeName.toLowerCase() }).select({ _id: 1 })
         if (!collegeId) {
             return res.status(400).send({ status: false, message: "Enter a valid college name." })
         }
-        result.collegeId = collegeId._id
-        let saveData = await internModel.create(result)
-        let  allData = {name:saveData.name,email:saveData.email,mobile:saveData.mobile,collegeId:saveData.collegeId,isDeleted:saveData.isDeleted}
-        return res.status(201).send({ status: true, data:allData })
+        final.collegeId = collegeId._id
+
+
+        let saveData = await internModel.create(final)
+
+        let result = { isDeleted: saveData.isDeleted, name: saveData.name, email: saveData.email, mobile: saveData.mobile, collegeId: saveData.collegeId }
+
+        return res.status(201).send({ status: true, data: result })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -77,25 +81,25 @@ const getInterns = async function(req, res) {
         let collegeName = req.query.collegeName
 
         if (nullValue(collegeName)) {
-            return res.status(400).send({ status: false, message: 'College name is not mentioned.' })
+            return res.status(400).send({ status: false, message: 'College name is not mentioned!' })
         }
 
-        let collegeId = await collegeModel.findOne({ name:collegeName }).select({ _id: 1,name:1,fullName:1,logoLink:1 })
+        let collegeId = await collegeModel.findOne({ name: collegeName.toLowerCase() }).select({ _id: 1, name: 1, fullName: 1, logoLink: 1 })
         if (!collegeId) {
-            return res.status(404).send({ status: false, message: "No such College is available" })
+            return res.status(404).send({ status: false, message: "No such College is available!" })
         }
-       
-        let college ={name:collegeId.name,fullName:collegeId.fullName,logoLink:collegeId.logoLink}
-         
+        let final = { name: collegeId.name, fullName: collegeId.fullName, logoLink: collegeId.logoLink }
+
+
         let intern = await internModel.find({ collegeId: collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
         if (intern.length == 0) {
-            let data = {...college, intern:"NO intern apply of this college " }
-            return res.status(404).send({ status: false, message: data })
+            let data = {...final, intern: "No intern have applied to this college!" }
+            return res.status(404).send({ status: false, message: final })
         }
 
-        let data = {...college, interns: intern }
-
+        let data = {...final, interns: intern }
         return res.status(200).send({ status: true, data:data })
+
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
