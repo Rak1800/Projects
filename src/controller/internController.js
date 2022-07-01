@@ -89,13 +89,13 @@ const getInterns = async function(req, res) {
          
         let intern = await internModel.find({ collegeId: collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
         if (intern.length == 0) {
-            let data = {...college, intern: "No intern have applied to this college." }
+            let data = {...college, intern:"NO intern apply of this college " }
             return res.status(404).send({ status: false, message: data })
         }
 
         let data = {...college, interns: intern }
 
-        return res.status(200).send({ status: true, data })
+        return res.status(200).send({ status: true, data:data })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
