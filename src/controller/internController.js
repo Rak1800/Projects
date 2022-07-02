@@ -16,13 +16,14 @@ const createIntern = async function(req, res) {
         if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, message: "Kindly enter your details." })
         }
-        if (!/^[a-zA-Z ]{3,20}$/.test(name)) {
-            return res.status(400).send({ status: false, message: "Intern name is not valid" })
-        }
         if (nullValue(name)) {
             return res.status(400).send({ status: false, message: "Invalid intern name or intern name is not mentioned." })
         }
+        if (!/^[a-zA-Z ]{3,20}$/.test(name)) {
+            return res.status(400).send({ status: false, message: "Intern name is not valid" })
+        }
         final.name = name
+
 
 
         if (nullValue(email)) {
@@ -50,15 +51,14 @@ const createIntern = async function(req, res) {
         }
         final.mobile = mobile
 
-   
 
-        if (!/^[a-zA-Z ]{3,20}$/.test(collegeName)) {
-            return res.status(400).send({ status: false, message: "College name is not valid" })
-        }
         if (nullValue(collegeName)) {
             return res.status(400).send({ status: false, message: "Invalid intern name or intern name is not mentioned." })
         }
-        let collegeId = await collegeModel.findOne({ name: collegeName.toLowerCase() }).select({ _id: 1 })
+        if (!/^[a-zA-Z ]{3,20}$/.test(collegeName)) {
+            return res.status(400).send({ status: false, message: "College name is not valid" })
+        }
+        let collegeId = await collegeModel.findOne({ name: collegeName.toLowerCase() })
         if (!collegeId) {
             return res.status(400).send({ status: false, message: "Enter a valid college name." })
         }
@@ -84,7 +84,7 @@ const getInterns = async function(req, res) {
             return res.status(400).send({ status: false, message: 'College name is not mentioned!' })
         }
 
-        let collegeId = await collegeModel.findOne({ name: collegeName.toLowerCase() }).select({ _id: 1, name: 1, fullName: 1, logoLink: 1 })
+        let collegeId = await collegeModel.findOne({ name: collegeName.toLowerCase() })
         if (!collegeId) {
             return res.status(404).send({ status: false, message: "No such College is available!" })
         }
@@ -94,7 +94,7 @@ const getInterns = async function(req, res) {
         let intern = await internModel.find({ collegeId: collegeId._id }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
         if (intern.length == 0) {
             let data = {...final, intern: "No intern have applied to this college!" }
-            return res.status(404).send({ status: false, message: final })
+            return res.status(404).send({ status: false, message: data })
         }
 
         let data = {...final, interns: intern }
