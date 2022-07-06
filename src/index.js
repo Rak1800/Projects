@@ -7,10 +7,10 @@ const route=require("./routes/route.js");
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extends:true}));
 
- mongoose.connect("mongodb+srv://Rak1800:Rakesh123@@cluster0.xntrj.mongodb.net/project3-group-52", {
-    useNewUrlParser: true
+ mongoose.connect("mongodb+srv://Rak1800:Rakesh123@@cluster0.xntrj.mongodb.net/project3-group", {
+    useNewUrlParser: true 
 })
- .then(()=>console.log("mongodb Conneted"))
+ .then(()=>console.log("mongodb Connected"))
  .catch((error)=>console.log(error))
 
  app.use('/',route);

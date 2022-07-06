@@ -49,3 +49,5 @@ let userlogin = async function (req, res) {
 
     }
 }
+
+module.exports.userlogin=userlogin
