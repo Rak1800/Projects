@@ -12,12 +12,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
+mongoose.connect("mongodb+srv://Rak18000:Rakesh123@cluster0.xntrj.mongodb.net/group-52-Database",{
+   useNewUrlParser: true
+}).then(() => console.log("MongoDB Is Connected")).catch(err => console.log(err));
+  
 
-mongoose.connect("mongodb+srv://tusharbarai1:Tb88774411@cluster0.3hlrc.mongodb.net/BookManagement", {
-    useNewUrlParser: true
-})
-    .then(() => console.log("MongoDb is connected"))
-    .catch(err => console.log(err))
 
 app.use('/', route)
 
