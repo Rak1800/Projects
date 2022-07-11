@@ -11,19 +11,16 @@ const checkAuth = function (req, res, next) {
     if (!token) token = req.headers["X-API-KEY"];
     if (!token)
       return res.status(401).send({ status: false, msg: "token must be present" });
-        try{
-          var decodedToken = jwt.verify(token, "functionup-radon-project3-group52")
-      
-      }
-      catch(err){
-          return res.status(401).send({status:false,msg:"token is invalid or expired"})
 
-      }
-   req.userId = decodedToken.userId;
-   
+      jwt.verify(token, "functionup-radon-project3-group52", {ignoreExpiration: true} ,function(x,y){
+        if(x) return res.status(401).send({status:false,msg:"token is invalid"}) 
+        if(Date.now()>y.exp*1000){
+        return res.status(401).send({status:false,message:"Token expired"})}
+        req.userId = y.userId;  
 
-    next();
-  } catch (error) {
+       next();
+
+      })} catch (error) {
     res.status(500).send({ status: false, Error: error.message });
   }
 };

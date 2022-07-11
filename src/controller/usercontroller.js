@@ -130,7 +130,7 @@ let userLogin = async function (req, res) {
         },
             "functionup-radon-project3-group52",
             {
-                expiresIn: "1h" 
+                expiresIn: "1m" 
             });
 
         res.setHeader("x-api-key", token)
