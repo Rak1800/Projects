@@ -22,12 +22,10 @@ const reviewBook = async function (req, res) {
     if (bookDetail.length == 0) {
       return res.status(404).send({ status: false, message: "Book Not found" });
     }
-    if(bookDetail.userId!=req.userId)
-    return res.status(400).send({status:false, message:"you are unathorized"})
-
+    
     let data = req.body;
 
-    let { review, rating, reviewedBy } = data;
+    let { review, rating } = data;
 
     if (isValidRequestBody(data)) {
       //validating is there any data inside request body
@@ -44,9 +42,9 @@ const reviewBook = async function (req, res) {
     if (!validRating.test(rating)) {
       return res.status(400).send({ status: false, message: "Rating must be between 1 to 5" });
     }
-    if (isValid(reviewedBy)) {
-      return res.status(400).send({ status: false, message: "Reviewer Name is required" });
-    }
+    // if (isValid(reviewedBy)) {
+    //   return res.status(400).send({ status: false, message: "Reviewer Name is required" });
+    // }
     let reviewData = {
       bookId: bookId,
       reviewedBy: data.reviewedBy,
@@ -104,8 +102,7 @@ const updateReviews = async function (req, res) {
       if (findbook.length==0) {
           return res.status(400).send({ status: false, message: "No book exist with this id" })
       }
-       if(findbook.userId!=req.userId)
-         return res.status(400).send({status:false, message:"you are unathorized"})   
+       
 
       // validating bookId is a valid object Id or not
       if (!mongoose.isValidObjectId(reviewId)) { 
@@ -117,6 +114,7 @@ const updateReviews = async function (req, res) {
       }
       let updateReview = await reviewmodel.findOneAndUpdate({ _id: reviewId, bookId: bookId },
           { $set: { review: data.review, rating: data.rating, reviewedBy: data.reviewedBy } }, { new: true })
+
       return res.status(200).send({ status: true, message: "Review updated successfully" ,data:updateReview})
    }catch (error) {
       res.status(500).send({ status: false, Error: error.message });
@@ -140,8 +138,7 @@ const deleteReview = async function (req, res) {
       if (findbook.length==0) {
           return res.status(400).send({ status: false, message: "No book exist with this id" })
       }
-       if(findbook.userId!=req.userId)
-         return res.status(400).send({status:false, message:"you are unathorized"})   
+      
 
     let reviewId = req.params.reviewId
     if (!reviewId) return res.status(400).send({ status: false, msg: "review Id is required" });

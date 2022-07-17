@@ -15,6 +15,7 @@ const createBook = async function (req, res) {
          
         if(isValidRequestBody(data))
          return res.status(400).send({status:false,msg:"provide the data in body"})
+          
 
          if(isValid(title))
          return res.status(400).send({status:false,msg:"provide the title in body"})
@@ -33,7 +34,7 @@ const createBook = async function (req, res) {
          let finduserId= await usermodel.findById({_id:userId})
          
          if (!finduserId)
-         return res.status(404).send({status:false,msg:"userId is found"})
+         return res.status(404).send({status:false,msg:"userId is not found"})
 
          if(finduserId._id!=req.userId)
               return res.status(400).send({status:false, message:"you are unathorized"})
@@ -48,7 +49,7 @@ const createBook = async function (req, res) {
           if(isValid(category))
           return res.status(400).send({status:false,msg:"provide the category in body"})
 
-          if (typeof data.subcategory === "undefined"  || data.subcategory === null )
+          if (typeof data.subcategory === "undefined"  || data.subcategory === "null" )
           return res.status(400).send({ status: false, msg:"please enter subcategory key or valid subcategory"})
       if (data.subcategory.length == 0) {
           return res.status(400).send({ status: false, msg: "subcategory is not valid" });
@@ -78,6 +79,7 @@ const createBook = async function (req, res) {
                 return res.status(400).send({ status: false, msg: "date format should be in YYYY-MM-DD" })
            
         }
+        data.bookCover= req.uploadFileURL
          saveData= await bookmodel.create(data)
          return res.status(201).send({status:true,message :"created book ", data:saveData})
 
@@ -94,7 +96,11 @@ const bookList= async function (req,res){
 
    let  query=req.query
 
-    let books= await bookmodel.find({$and:[query,{isDeleted:false}]}).select({_id:1,title:1,excerpt:1,userId:1,category:1,reviews:1,releasedAt:1}).sort({title:1})
+    let books= await bookmodel.find({$and:[query,{isDeleted:false}]}).select({_id:1,title:1,excerpt:1,userId:1,category:1,reviews:1,releasedAt:1})
+
+    books.sort(function (a, b) {
+        return a.title.localeCompare(b.title);
+      });
     
     if(books.length==0)
     return res.status(404).send({status:false,message:"Books are not present"})

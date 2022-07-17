@@ -130,12 +130,12 @@ let userLogin = async function (req, res) {
         },
             "functionup-radon-project3-group52",
             {
-                expiresIn: "1m" 
+                expiresIn: "1h" 
             });
 
         res.setHeader("x-api-key", token)
 
-        return res.status(200).send({ status: true, token: token, message: "User Logged in Successfully" });
+        return res.status(200).send({ status: true,message: "User Logged in Successfully", token: token  });
 
 
     } catch (error) {
